@@ -18,37 +18,51 @@ Two things:
 
 ### First time on a project
 
-Open your terminal. `cd` into your Magento or Drupal project root (where `composer.json` is).
+Open your terminal. `cd` into your project root (where `composer.json` is).
 
-**Magento:**
+**Step 1: Download the workflow into your project:**
 ```bash
-bash /path/to/claude-code-workflows/magento-workflow/setup.sh
+git clone git@github.com:gianani/claude-code-sdlc-workflow.git
 ```
 
-**Drupal:**
+**Step 2: Run setup (Magento or Drupal):**
 ```bash
-bash /path/to/claude-code-workflows/drupal-workflow/setup.sh
+# Magento
+bash claude-code-sdlc-workflow/magento-workflow/setup.sh
+
+# Drupal
+bash claude-code-sdlc-workflow/drupal-workflow/setup.sh
 ```
 
-**What the script does:**
-- Copies `.claude/commands/` into your project (the slash commands)
-- Creates `.claude/planning/` (where task docs go)
-- Adds our coding conventions to your `CLAUDE.md`
-
-**After running the script:**
+**Step 3: Commit:**
 ```bash
-git add CLAUDE.md .claude/commands/
+git add CLAUDE.md .claude/commands/ .gitignore
 git commit -m "Add Claude Code workflow"
 git push
 ```
+
+The script handles everything:
+- Copies `.claude/commands/` into your project
+- Creates `.claude/planning/`
+- Adds coding conventions to your `CLAUDE.md`
+- Adds `claude-code-sdlc-workflow/` and `.claude/planning/` to `.gitignore`
 
 Now everyone on the team gets the same conventions and commands when they pull.
 
 ### Updating (when we release changes)
 
-Pull the latest from this repo, then re-run the same setup script. It will:
-- Overwrite `.claude/commands/` with the latest versions
-- Update the conventions block in your `CLAUDE.md` without touching anything else in the file
+```bash
+cd claude-code-sdlc-workflow && git pull && cd ..
+
+# Re-run the same setup command you used before
+bash claude-code-sdlc-workflow/magento-workflow/setup.sh   # or drupal-workflow
+
+git add CLAUDE.md .claude/commands/
+git commit -m "Update Claude Code workflow"
+git push
+```
+
+The script overwrites commands and updates the conventions block in your CLAUDE.md without touching anything else in the file.
 
 ---
 
