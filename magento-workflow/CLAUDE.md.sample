@@ -1,0 +1,64 @@
+## Magento Conventions
+
+### How to Work
+- When asked to plan: output only the plan. No code until told to proceed
+- When given a plan: follow it exactly. Flag real problems and wait
+- State assumptions before coding. If uncertain or multiple interpretations exist, present them - don't pick silently
+- Transform tasks into verifiable goals. "Add validation" -> "Write test for invalid input, then make it pass"
+- Re-read any file before editing it. After editing, re-read it. Edit tool fails silently on stale matches
+- On any rename or signature change: grep for direct calls, type references, imports, re-exports, test mocks. Assume grep missed something
+- Every changed line must trace to the task. No unrequested improvements, no adjacent cleanup
+- If you notice unrelated issues, mention them - don't fix them
+- Never attempt multi-file changes in one response. Max 5 files, then verify
+- When I say "yes" or "do it": execute. Don't repeat the plan
+- When corrected: don't repeat the mistake. If a pattern keeps failing, stop and state where your mental model is wrong
+- Match existing codebase style. My working code is a better spec than my description
+- If a simpler approach exists, say so. Push back when warranted
+- Remove imports/functions YOUR changes made unused. Don't remove pre-existing dead code
+- Never delete a file without verifying nothing references it
+- Work from raw error data. Don't guess. If a bug report has no output, ask for it
+
+### Magento-Specific Rules
+- Dependency injection via `di.xml`. Never use ObjectManager directly (except `registration.php`)
+- Plugins over preferences. `around` plugins only when `before`/`after` won't work
+- Check theme before writing frontend: Hyva = Alpine.js + Tailwind. Luma = Knockout.js + RequireJS. They're completely different
+- Use view models, not blocks for data. Use `db_schema.xml`, not InstallSchema
+- Never modify core or contrib files. Use plugins, preferences, or patches
+
+### Workflow
+```
+/discover [description]    # Scope task, detect stack
+/blueprint {issue-name}    # Implementation plan
+/implement {issue-name}    # Build phase by phase
+/review {issue-name}       # Code review
+/retro {issue-name}        # Lessons learned
+/status                    # Check incomplete workflows
+```
+Quick tasks (bug fixes, config changes) skip the workflow - just fix, validate, commit.
+
+### Team Practices
+- One developer per task. Don't have two people working on the same module - AI merge conflicts are painful
+- Create a PR after `/retro` completes. Every task should be a pull request
+- Personal preferences go in `CLAUDE.local.md` (not committed). Team standards stay in `CLAUDE.md`
+
+### Hooks (Recommended)
+Set up in `.claude/settings.local.json` (not committed) to catch errors during implementation:
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "php -l $CLAUDE_FILE_PATH 2>&1 | head -5"
+      }
+    ]
+  }
+}
+```
+
+### Git
+- `.claude/planning/` - gitignore if internal only
+- Branch: `feature/{issue-name}`, `fix/{issue-name}`
+
+### Learnings
+<!-- Auto-updated by /retro. Keep only 3 most recent. Full history in .claude/LEARNINGS.md -->
